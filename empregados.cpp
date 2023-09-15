@@ -7,7 +7,7 @@ vetor de empregados e a quantidade de elementos no vetor e atualize o salário d
 cada empregado em 10%. Crie uma função main para testar a função.*/
 
 #include <iostream>
-
+#include <string>
 
 using namespace std;
 

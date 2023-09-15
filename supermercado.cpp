@@ -18,6 +18,7 @@ O sistema deverá ser feito modularizados, com qualidade e utilizando estrutura 
 sua implementação.*/
 
 #include <iostream>
+#include <string>
 
 
 using namespace std;

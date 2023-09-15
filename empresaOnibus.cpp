@@ -18,7 +18,7 @@ determinada viagem.
 5. Qual a média de idade dos passageiros.*/
 
 #include <iostream>
-
+#include <string>
 
 using namespace std;
 
