@@ -18,16 +18,165 @@ determinada viagem.
 5. Qual a média de idade dos passageiros.*/
 
 #include <iostream>
+#include <vector>
 #include <string>
+#include <iomanip>
 
 using namespace std;
 
-int main (){
+struct Passagem {
+    string nome;
+    string dataHora;
+    string cpf;
+    int idade;
+};
 
+int main() {
+    const int NUM_VIAGENS = 5;
+    const int NUM_ASSENTOS = 40;
+    const double PRECO_PASSAGEM = 80.0;
 
+    vector<vector<Passagem>> registros(NUM_VIAGENS, vector<Passagem>(NUM_ASSENTOS));
 
+    while (true) {
+        cout << "\nMenu:" << endl;
+        cout << "1. Registrar Passagem" << endl;
+        cout << "2. Total Arrecadado para uma Viagem" << endl;
+        cout << "3. Total Arrecadado em um Mês" << endl;
+        cout << "4. Nome do Passageiro de uma Poltrona" << endl;
+        cout << "5. Horário de Viagem Mais Rentável" << endl;
+        cout << "6. Média de Idade dos Passageiros" << endl;
+        cout << "7. Sair" << endl;
 
+        int opcao;
+        cout << "Escolha uma opção: ";
+        cin >> opcao;
 
+        switch (opcao) {
+            case 1: {
+                int numViagem, numAssento;
+                cout << "Digite o número da viagem (1 a " << NUM_VIAGENS << "): ";
+                cin >> numViagem;
+                cout << "Digite o número do assento (1 a " << NUM_ASSENTOS << "): ";
+                cin >> numAssento;
 
-    return(0);
+                if (numViagem >= 1 && numViagem <= NUM_VIAGENS && numAssento >= 1 && numAssento <= NUM_ASSENTOS) {
+                    Passagem passagem;
+                    cout << "Digite o nome do passageiro: ";
+                    cin.ignore();
+                    getline(cin, passagem.nome);
+                    cout << "Digite a data e hora (DD/MM/YYYY HH:MM): ";
+                    cin.ignore();
+                    getline(cin, passagem.dataHora);
+                    cout << "Digite o CPF do passageiro: ";
+                    cin >> passagem.cpf;
+                    cout << "Digite a idade do passageiro: ";
+                    cin >> passagem.idade;
+
+                    registros[numViagem - 1][numAssento - 1] = passagem;
+
+                    cout << "Passagem registrada com sucesso." << endl;
+                } else {
+                    cout << "Viagem ou assento inválido." << endl;
+                }
+                break;
+            }
+            case 2: {
+                int numViagem;
+                cout << "Digite o número da viagem (1 a " << NUM_VIAGENS << "): ";
+                cin >> numViagem;
+
+                if (numViagem >= 1 && numViagem <= NUM_VIAGENS) {
+                    double totalArrecadado = 0.0;
+                    for (const Passagem& passagem : registros[numViagem - 1]) {
+                        if (!passagem.nome.empty()) {
+                            totalArrecadado += PRECO_PASSAGEM;
+                        }
+                    }
+                    cout << "Total arrecadado para a viagem " << numViagem << ": R$ " << totalArrecadado << endl;
+                } else {
+                    cout << "Viagem inválida." << endl;
+                }
+                break;
+            }
+            case 3: {
+                string mes;
+                cout << "Digite o mês (MM): ";
+                cin >> mes;
+                double totalArrecadadoMes = 0.0;
+                for (const vector<Passagem>& viagem : registros) {
+                    for (const Passagem& passagem : viagem) {
+                        if (!passagem.nome.empty() && passagem.dataHora.substr(3, 2) == mes) {
+                            totalArrecadadoMes += PRECO_PASSAGEM;
+                        }
+                    }
+                }
+                cout << "Total arrecadado em " << mes << ": R$ " << totalArrecadadoMes << endl;
+                break;
+            }
+            case 4: {
+                int numViagem, numAssento;
+                cout << "Digite o número da viagem (1 a " << NUM_VIAGENS << "): ";
+                cin >> numViagem;
+                cout << "Digite o número do assento (1 a " << NUM_ASSENTOS << "): ";
+                cin >> numAssento;
+
+                if (numViagem >= 1 && numViagem <= NUM_VIAGENS && numAssento >= 1 && numAssento <= NUM_ASSENTOS) {
+                    const Passagem& passagem = registros[numViagem - 1][numAssento - 1];
+                    if (!passagem.nome.empty()) {
+                        cout << "Nome do passageiro da poltrona " << numAssento << ": " << passagem.nome << endl;
+                    } else {
+                        cout << "Poltrona vazia." << endl;
+                    }
+                } else {
+                    cout << "Viagem ou assento inválido." << endl;
+                }
+                break;
+            }
+            case 5: {
+                string horarioMaisRentavel;
+                double arrecadacaoMaxima = 0.0;
+                for (int i = 0; i < NUM_VIAGENS; ++i) {
+                    double arrecadacaoViagem = 0.0;
+                    for (const Passagem& passagem : registros[i]) {
+                        if (!passagem.nome.empty()) {
+                            arrecadacaoViagem += PRECO_PASSAGEM;
+                        }
+                    }
+                    if (arrecadacaoViagem > arrecadacaoMaxima) {
+                        arrecadacaoMaxima = arrecadacaoViagem;
+                        horarioMaisRentavel = "Viagem " + to_string(i + 1);
+                    }
+                }
+                cout << "Horário de viagem mais rentável: " << horarioMaisRentavel << endl;
+                break;
+            }
+            case 6: {
+                int somaIdades = 0;
+                int totalPassageiros = 0;
+                for (const vector<Passagem>& viagem : registros) {
+                    for (const Passagem& passagem : viagem) {
+                        if (!passagem.nome.empty()) {
+                            somaIdades += passagem.idade;
+                            totalPassageiros++;
+                        }
+                    }
+                }
+                if (totalPassageiros > 0) {
+                    double mediaIdade = static_cast<double>(somaIdades) / totalPassageiros;
+                    cout << "Média de idade dos passageiros: " << fixed << setprecision(2) << mediaIdade << " anos" << endl;
+                } else {
+                    cout << "Nenhum passageiro registrado." << endl;
+                }
+                break;
+            }
+            case 7:
+                cout << "Saindo do programa." << endl;
+                return 0;
+            default:
+                cout << "Opção inválida. Tente novamente." << endl;
+        }
+    }
+
+    return 0;
 }
